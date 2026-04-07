@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -i \"http://localhost:5000/proxy?url=https://tcgbusfs.blob.core.windows.net/dotapp/news.json\")",
+      "WebFetch(domain:tcgbusfs.blob.core.windows.net)"
+    ]
+  }
+}
