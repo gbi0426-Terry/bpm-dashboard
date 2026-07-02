@@ -201,8 +201,8 @@
     right:26px; bottom:26px;
     width:58px; height:58px;
     border-radius:50%;
-    background:linear-gradient(135deg,#7b7ff0,#4a90e2);
-    box-shadow:0 6px 20px rgba(60,80,180,0.35);
+    background:linear-gradient(135deg,#1f6fe5,#38c6e6);
+    box-shadow:0 6px 20px rgba(30,100,200,0.4);
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
     z-index:999;
@@ -210,7 +210,7 @@
     transition:transform .15s ease;
   }
   .agent-fab:hover{transform:scale(1.06);}
-  .agent-fab svg{width:26px;height:26px;fill:#fff;}
+  .agent-fab svg{width:32px;height:32px;}
 
   .agent-panel{
     position:fixed;
@@ -526,7 +526,21 @@
 
 <!-- ===== Floating Data Agent widget ===== -->
 <button class="agent-fab" id="agentFab" aria-label="開啟資金分析助理">
-  <svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4zm0 3.2 5.8 2.9v4.4c0 3.7-2.4 6.5-5.8 7.6-3.4-1.1-5.8-3.9-5.8-7.6V8.1L12 5.2zM9 12l2.1 2.1L15.5 9.6l1.1 1.1L11.1 16 7.9 12.8 9 12z"/></svg>
+  <svg viewBox="0 0 100 100">
+    <defs>
+      <mask id="botSmileMask">
+        <rect width="100" height="100" fill="#fff"/>
+        <path d="M38 58 Q50 67 62 58" stroke="#000" stroke-width="7" stroke-linecap="round" fill="none"/>
+      </mask>
+    </defs>
+    <g fill="#fff" mask="url(#botSmileMask)">
+      <rect x="13" y="45" width="11" height="17" rx="5.5"/>
+      <rect x="76" y="45" width="11" height="17" rx="5.5"/>
+      <rect x="47" y="15" width="6" height="17" rx="3"/>
+      <circle cx="50" cy="13" r="6"/>
+      <rect x="23" y="29" width="54" height="46" rx="17"/>
+    </g>
+  </svg>
 </button>
 
 <div class="agent-panel" id="agentPanel">
@@ -549,9 +563,9 @@
     <div id="agentIntroSection">
       <div class="agent-intro">
         <div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div>
-        <h3>資金與匯率分析--綜創營運能力小助手</h3>
+        <h3>營運資金分析--營運能力小助手</h3>
       </div>
-      <div class="agent-greeting">您好，我是資金與匯率分析助理。我可以協助您查詢集團及錡顯各幣別餘額、現金流量、USD匯率走勢及未來六個月資金水位預估，並找出風險部位、分析波動原因及提供建議。您可以直接選擇下方問題，或輸入想查詢的幣別、期間與項目。</div>
+      <div class="agent-greeting">您好，我是營運資金分析助理。我可以協助您查詢各幣別餘額、預估現金流入流出、USD 匯率變化、集團與錸顯未來資金水位，並先用目前儀表板資料提供分析建議。未來可串接 AI API，改成即時讀取資料後回覆。</div>
 
       <div class="agent-tabs-row">
         <button class="tab-arrow" id="tabPrev">&lsaquo;</button>
