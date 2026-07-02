@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>綜創營運能力</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  :root{
+    --navy:#0a2f6b;
+    --navy2:#123a86;
+    --blue:#2e6fd6;
+    --blue-light:#5b9bd5;
+    --orange:#f5a623;
+    --teal:#3fc1c9;
+    --cyan:#6ec6e0;
+    --red:#e05252;
+    --card-bg:#ffffff;
+    --page-bg:#eef1f6;
+    --text-gray:#6b7280;
+    --text-dark:#22304a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"PingFang TC","Microsoft JhengHei","Helvetica Neue",Arial,sans-serif;
+    background:var(--page-bg);
+    color:var(--text-dark);
+  }
+  .wrap{
+    max-width:1300px;
+    margin:0 auto;
+    padding:0 0 24px 0;
+  }
+
+  /* ===== Header ===== */
+  header{
+    background:linear-gradient(90deg,#08245c 0%, #1660c9 55%, #1f7fe0 100%);
+    color:#fff;
+    padding:14px 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-radius:0 0 4px 4px;
+    box-shadow:0 2px 8px rgba(10,47,107,0.25);
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:700;
+    letter-spacing:1px;
+    font-size:15px;
+  }
+  .logo-mark{
+    width:26px;height:26px;border-radius:6px;
+    background:conic-gradient(#e94b4b 0 25%, #3fc16b 25% 50%, #f5c542 50% 75%, #2e6fd6 75% 100%);
+  }
+  .title{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:10px;
+    text-shadow:0 0 18px rgba(255,255,255,0.35);
+  }
+  .header-icon{
+    width:20px;height:20px;background:rgba(255,255,255,0.85);border-radius:3px;
+  }
+
+  /* ===== KPI Cards ===== */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:14px;
+    padding:16px 16px 0 16px;
+  }
+  .kpi-card{
+    background:var(--card-bg);
+    border-radius:10px;
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    box-shadow:0 1px 4px rgba(20,30,60,0.08);
+  }
+  .kpi-icon{
+    width:40px;height:40px;min-width:40px;
+    border-radius:9px;
+    background:linear-gradient(160deg,#6fb2ea,#3f7fd6);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .kpi-icon svg{width:22px;height:22px;fill:#fff;}
+  .kpi-value{
+    font-size:21px;
+    font-weight:800;
+    color:#1a4fbf;
+    line-height:1.15;
+  }
+  .kpi-value span.unit{
+    font-size:13px;
+    font-weight:600;
+    color:#7b8aa3;
+    margin-left:4px;
+  }
+  .kpi-label{
+    font-size:12px;
+    color:var(--text-gray);
+    margin-top:2px;
+  }
+
+  /* ===== Panels ===== */
+  .grid-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    padding:14px 16px 0 16px;
+  }
+  .panel{
+    background:var(--card-bg);
+    border-radius:10px;
+    box-shadow:0 1px 4px rgba(20,30,60,0.08);
+    padding:12px 14px 10px 14px;
+    display:flex;
+    flex-direction:column;
+  }
+  .panel-title{
+    font-size:13px;
+    font-weight:700;
+    color:#2a3550;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .panel-title::before{
+    content:"//";
+    color:var(--blue);
+    font-weight:800;
+  }
+  .panel-header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .mini-btn{
+    width:26px;height:26px;border-radius:50%;
+    background:linear-gradient(160deg,#4a90e2,#1a4fbf);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:12px;
+  }
+
+  /* donut sub-panels */
+  .donut-split{
+    display:flex;
+    gap:8px;
+    flex:1;
+  }
+  .donut-sub{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .donut-sub-title{
+    font-size:11px;
+    color:#4a5568;
+    background:#f1f4f9;
+    padding:3px 10px;
+    border-radius:4px;
+    margin-bottom:6px;
+  }
+  .donut-canvas-wrap{
+    position:relative;
+    width:150px;
+    height:150px;
+  }
+  .donut-center-icon{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:26px;height:26px;
+    border-radius:50%;
+    background:#2e6fd6;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .donut-center-icon svg{width:14px;height:14px;fill:#fff;}
+  .donut-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 12px;
+    justify-content:center;
+    margin-top:6px;
+    font-size:11px;
+    color:#4a5568;
+  }
+  .donut-legend .dot{
+    display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;
+  }
+
+  .chart-canvas-wrap{
+    flex:1;
+    position:relative;
+    min-height:230px;
+  }
+  canvas{max-width:100%;}
+
+  /* ===== Floating Data Agent widget ===== */
+  .agent-fab{
+    position:fixed;
+    right:26px; bottom:26px;
+    width:58px; height:58px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#7b7ff0,#4a90e2);
+    box-shadow:0 6px 20px rgba(60,80,180,0.35);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    z-index:999;
+    border:none;
+    transition:transform .15s ease;
+  }
+  .agent-fab:hover{transform:scale(1.06);}
+  .agent-fab svg{width:26px;height:26px;fill:#fff;}
+
+  .agent-panel{
+    position:fixed;
+    right:26px; bottom:98px;
+    width:400px;
+    max-width:calc(100vw - 32px);
+    height:640px;
+    max-height:calc(100vh - 140px);
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 16px 48px rgba(20,30,60,0.28);
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+    z-index:1000;
+  }
+  .agent-panel.open{display:flex;}
+
+  .agent-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px;
+    border-bottom:1px solid #f0f1f5;
+  }
+  .agent-topbar .agent-brand{
+    display:flex;align-items:center;gap:8px;
+    font-weight:800;font-size:15px;color:#1c2333;
+  }
+  .agent-topbar .agent-brand .brand-icon{
+    width:24px;height:24px;border-radius:6px;
+    background:linear-gradient(135deg,#7b7ff0,#4a90e2);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .agent-topbar .agent-brand .brand-icon svg{width:14px;height:14px;fill:#fff;}
+  .agent-topbar button{
+    background:none;border:none;cursor:pointer;
+    color:#8a92a6;padding:4px;display:flex;
+  }
+  .agent-topbar button svg{width:18px;height:18px;}
+
+  .agent-hero{
+    background:linear-gradient(120deg,#e3d9fb 0%,#d6e8fb 60%,#cdeafb 100%);
+    padding:16px;
+    display:flex;justify-content:flex-end;gap:10px;
+  }
+  .agent-hero button{
+    width:28px;height:28px;border-radius:50%;
+    background:rgba(255,255,255,0.6);
+    border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .agent-hero button svg{width:15px;height:15px;fill:#4a5568;}
+
+  .agent-body{
+    flex:1;
+    overflow-y:auto;
+    padding:0 18px 12px 18px;
+  }
+  .agent-intro{
+    display:flex;gap:12px;
+    padding:14px 0 10px 0;
+  }
+  .agent-avatar{
+    width:44px;height:44px;min-width:44px;
+    border-radius:10px;
+    background:#fff;
+    border:1px solid #eef0f5;
+    box-shadow:0 2px 8px rgba(30,50,120,0.1);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .agent-avatar svg{width:24px;height:24px;}
+  .agent-intro h3{
+    margin:2px 0 0 0;
+    font-size:16px;font-weight:800;color:#1c2333;
+    line-height:1.35;
+  }
+  .agent-greeting{
+    font-size:12.5px;line-height:1.7;color:#4a5568;
+    background:#f7f8fc;
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:12px;
+  }
+
+  .agent-tabs-row{
+    display:flex;align-items:center;gap:4px;
+    margin-bottom:8px;
+  }
+  .agent-tabs-row .tab-arrow{
+    background:none;border:none;color:#a0a8ba;cursor:pointer;
+    padding:2px;flex:none;display:flex;
+  }
+  .agent-tabs-row .tab-arrow svg{width:16px;height:16px;}
+  .agent-tabs{
+    display:flex;gap:6px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    flex:1;
+  }
+  .agent-tabs::-webkit-scrollbar{display:none;}
+  .agent-tab{
+    white-space:nowrap;
+    font-size:12.5px;
+    padding:7px 12px;
+    border-radius:8px;
+    color:#6b7280;
+    cursor:pointer;
+    border:none;
+    background:transparent;
+    font-weight:600;
+  }
+  .agent-tab.active{
+    background:#fff;
+    color:#1c2333;
+    box-shadow:0 1px 4px rgba(20,30,60,0.15);
+  }
+
+  .agent-suggestions{
+    background:#fff;
+    border:1px solid #f0f1f5;
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .agent-suggestion{
+    display:flex;align-items:center;gap:8px;
+    padding:12px 14px;
+    font-size:13px;color:#2a3550;
+    cursor:pointer;
+    border-bottom:1px solid #f3f4f8;
+  }
+  .agent-suggestion:last-child{border-bottom:none;}
+  .agent-suggestion:hover{background:#f7f9ff;}
+  .agent-suggestion svg{width:14px;height:14px;fill:#5b7fe0;min-width:14px;}
+
+  .agent-thread{display:none;flex-direction:column;gap:12px;padding-top:12px;}
+  .agent-thread.active{display:flex;}
+  .msg-row{display:flex;gap:8px;max-width:100%;}
+  .msg-row.user{justify-content:flex-end;}
+  .msg-bubble{
+    max-width:82%;
+    padding:10px 13px;
+    border-radius:12px;
+    font-size:13px;
+    line-height:1.65;
+    white-space:pre-wrap;
+  }
+  .msg-row.user .msg-bubble{
+    background:linear-gradient(135deg,#4a7fd6,#3a63c9);
+    color:#fff;
+    border-bottom-right-radius:3px;
+  }
+  .msg-row.agent .msg-bubble{
+    background:#f2f4f9;
+    color:#2a3550;
+    border-bottom-left-radius:3px;
+  }
+  .msg-row.agent .agent-avatar{width:26px;height:26px;min-width:26px;border-radius:7px;}
+  .msg-row.agent .agent-avatar svg{width:14px;height:14px;}
+  .typing-dots{display:flex;gap:3px;padding:4px 2px;}
+  .typing-dots span{
+    width:5px;height:5px;border-radius:50%;background:#a0a8ba;
+    animation:blink 1.2s infinite ease-in-out both;
+  }
+  .typing-dots span:nth-child(2){animation-delay:.2s;}
+  .typing-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;}40%{opacity:1;}}
+
+  .agent-footer{
+    padding:10px 16px 14px 16px;
+    border-top:1px solid #f0f1f5;
+  }
+  .agent-input-box{
+    display:flex;align-items:flex-end;gap:8px;
+    border:1px solid #e2e5ee;
+    border-radius:14px;
+    padding:10px 10px 10px 14px;
+  }
+  .agent-input-box textarea{
+    flex:1;
+    border:none;outline:none;resize:none;
+    font-size:13px;font-family:inherit;color:#1c2333;
+    max-height:80px;
+    line-height:1.5;
+  }
+  .agent-input-box textarea::placeholder{color:#a0a8ba;}
+  .agent-input-box .clip-btn{
+    background:none;border:none;color:#8a92a6;cursor:pointer;padding:2px;
+  }
+  .agent-input-box .clip-btn svg{width:17px;height:17px;}
+  .agent-send-btn{
+    width:32px;height:32px;min-width:32px;border-radius:50%;
+    background:#e6e9f2;
+    border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .agent-send-btn.ready{background:linear-gradient(135deg,#4a7fd6,#3a63c9);}
+  .agent-send-btn svg{width:15px;height:15px;fill:#9aa2b5;}
+  .agent-send-btn.ready svg{fill:#fff;}
+  .agent-disclaimer{
+    text-align:center;font-size:11px;color:#a0a8ba;margin-top:8px;
+  }
+
+  @media (max-width:480px){
+    .agent-panel{right:12px;left:12px;width:auto;bottom:88px;}
+    .agent-fab{right:16px;bottom:16px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <span>LAYNITRIDE</span>
+    </div>
+    <div class="title">綜創營運能力</div>
+    <div class="header-icon"></div>
+  </header>
+
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7v2h20V7L12 2zM4 10v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+      <div>
+        <div class="kpi-value">8000000<span class="unit">元</span></div>
+        <div class="kpi-label">總金額 (NTD)</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7v2h20V7L12 2zM4 10v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+      <div>
+        <div class="kpi-value">50000<span class="unit">元</span></div>
+        <div class="kpi-label">總金額 (USD)</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7v2h20V7L12 2zM4 10v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+      <div>
+        <div class="kpi-value">90000<span class="unit">元</span></div>
+        <div class="kpi-label">總金額 (JPY)</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7v2h20V7L12 2zM4 10v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+      <div>
+        <div class="kpi-value">90000<span class="unit">元</span></div>
+        <div class="kpi-label">總金額 (xxx)</div>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7v2h20V7L12 2zM4 10v8H2v2h20v-2h-2v-8h-2v8h-3v-8h-2v8h-3v-8H8v8H6v-8H4z"/></svg></div>
+      <div>
+        <div class="kpi-value">90000<span class="unit">元</span></div>
+        <div class="kpi-label">總金額 (xxx)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 1 -->
+  <div class="grid-row">
+
+    <div class="panel">
+      <div class="panel-title">集團及錡顯各幣別餘額</div>
+      <div class="donut-split">
+        <div class="donut-sub">
+          <div class="donut-sub-title">集團各幣別餘額</div>
+          <div class="donut-canvas-wrap">
+            <canvas id="donut1"></canvas>
+            <div class="donut-center-icon"><svg viewBox="0 0 24 24"><path d="M12 1c-.9 0-1.6.7-1.6 1.6v.7c-2.2.4-4 2-4 4.2 0 2.8 2.4 3.7 4.7 4.4 2.1.6 3.2 1.1 3.2 2.3 0 1.1-1.2 1.8-2.6 1.8-1.6 0-2.7-.8-3-2h-2.1c.3 2.1 1.9 3.5 4 3.9v.7c0 .9.7 1.6 1.6 1.6s1.6-.7 1.6-1.6v-.7c2.4-.4 4.2-2 4.2-4.3 0-2.9-2.5-3.8-4.8-4.4-1.9-.5-3.1-1-3.1-2.2 0-1 1-1.7 2.3-1.7 1.4 0 2.3.7 2.6 1.8h2.1c-.3-2-1.7-3.3-3.6-3.7v-.7c0-.9-.7-1.6-1.5-1.6z"/></svg></div>
+          </div>
+          <div class="donut-legend" id="legend1"></div>
+        </div>
+        <div class="donut-sub">
+          <div class="donut-sub-title">錡顯各幣別餘額</div>
+          <div class="donut-canvas-wrap">
+            <canvas id="donut2"></canvas>
+            <div class="donut-center-icon"><svg viewBox="0 0 24 24"><path d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg></div>
+          </div>
+          <div class="donut-legend" id="legend2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header-row">
+        <div class="panel-title">2025/01~2025/6月預估現金流量</div>
+        <div class="mini-btn">☀</div>
+      </div>
+      <div class="chart-canvas-wrap"><canvas id="cashflowChart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">USD近期匯率及去年同期比較</div>
+      <div class="chart-canvas-wrap"><canvas id="usdChart"></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- Row 2 -->
+  <div class="grid-row">
+    <div class="panel">
+      <div class="panel-title">集團未來六個月底資金水位預估</div>
+      <div class="chart-canvas-wrap"><canvas id="forecast1"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">集團未來六個月底資金水位預估(含CB+CI金額)</div>
+      <div class="chart-canvas-wrap"><canvas id="forecast2"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">錡顯未來六個月底資金水位預估</div>
+      <div class="chart-canvas-wrap"><canvas id="forecast3"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Floating Data Agent widget ===== -->
+<button class="agent-fab" id="agentFab" aria-label="開啟資金分析助理">
+  <svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4zm0 3.2 5.8 2.9v4.4c0 3.7-2.4 6.5-5.8 7.6-3.4-1.1-5.8-3.9-5.8-7.6V8.1L12 5.2zM9 12l2.1 2.1L15.5 9.6l1.1 1.1L11.1 16 7.9 12.8 9 12z"/></svg>
+</button>
+
+<div class="agent-panel" id="agentPanel">
+  <div class="agent-topbar">
+    <div class="agent-brand">
+      <span class="brand-icon"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z"/></svg></span>
+      <span>Data Agent</span>
+    </div>
+    <button id="agentClose" aria-label="關閉">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="agent-hero">
+    <button id="agentHistory" title="歷史紀錄"><svg viewBox="0 0 24 24"><path d="M12 6v6l4 2M21 12a9 9 0 1 1-3-6.7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button id="agentNewChat" title="開新對話"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></button>
+  </div>
+
+  <div class="agent-body" id="agentBody">
+    <div id="agentIntroSection">
+      <div class="agent-intro">
+        <div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div>
+        <h3>資金與匯率分析--綜創營運能力小助手</h3>
+      </div>
+      <div class="agent-greeting">您好，我是資金與匯率分析助理。我可以協助您查詢集團及錡顯各幣別餘額、現金流量、USD匯率走勢及未來六個月資金水位預估，並找出風險部位、分析波動原因及提供建議。您可以直接選擇下方問題，或輸入想查詢的幣別、期間與項目。</div>
+
+      <div class="agent-tabs-row">
+        <button class="tab-arrow" id="tabPrev">&lsaquo;</button>
+        <div class="agent-tabs" id="agentTabs"></div>
+        <button class="tab-arrow" id="tabNext">&rsaquo;</button>
+      </div>
+
+      <div class="agent-suggestions" id="agentSuggestions"></div>
+    </div>
+
+    <div class="agent-thread" id="agentThread"></div>
+  </div>
+
+  <div class="agent-footer">
+    <div class="agent-input-box">
+      <button class="clip-btn" aria-label="附加檔案"><svg viewBox="0 0 24 24"><path d="M21 11.5 12.5 20a4.5 4.5 0 0 1-6.4-6.4L14 5.7a3 3 0 0 1 4.3 4.3L10 18.3a1.5 1.5 0 0 1-2.1-2.1L15.5 8.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <textarea id="agentInput" rows="1" placeholder="在此輸入任何您想查詢或分析的問題"></textarea>
+      <button class="agent-send-btn" id="agentSend" aria-label="送出">
+        <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="agent-disclaimer">內容均由AI生成，僅供參考</div>
+  </div>
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+Chart.defaults.font.family = "'PingFang TC','Microsoft JhengHei',sans-serif";
+Chart.defaults.color = '#5b6577';
+
+/* ---------- Donut charts ---------- */
+const donutColors = { NTD:'#2e6fd6', USD:'#f5a623', OTHER:'#c9ced9', JPY:'#3fc1c9' };
+function buildDonut(canvasId, legendId, data){
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  new Chart(document.getElementById(canvasId), {
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{
+        data: values,
+        backgroundColor: labels.map(l => donutColors[l]),
+        borderWidth:2,
+        borderColor:'#fff'
+      }]
+    },
+    options:{
+      cutout:'62%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{enabled:true},
+        datalabels:{
+          color:'#3a4356',
+          font:{size:10, weight:'600'},
+          formatter:(v,ctx)=> ctx.chart.data.labels[ctx.dataIndex] + ' ' + v
+        }
+      }
+    }
+  });
+  const legendEl = document.getElementById(legendId);
+  legendEl.innerHTML = labels.map(l =>
+    `<span><span class="dot" style="background:${donutColors[l]}"></span>${l}</span>`
+  ).join('');
+}
+buildDonut('donut1','legend1',{NTD:30,USD:80,OTHER:5,JPY:40});
+buildDonut('donut2','legend2',{NTD:30,USD:80,OTHER:5,JPY:40});
+
+/* ---------- Cashflow bar chart ---------- */
+new Chart(document.getElementById('cashflowChart'), {
+  type:'bar',
+  data:{
+    labels:['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06'],
+    datasets:[
+      {
+        label:'現金流入',
+        data:[100000,200000,150000,100000,250000,300000],
+        backgroundColor:'#3f7fd6',
+        borderRadius:2,
+        maxBarThickness:26,
+        datalabels:{anchor:'end',align:'top',color:'#3f7fd6',font:{size:10}}
+      },
+      {
+        label:'現金流出',
+        data:[-300000,-300000,-300000,-300000,-300000,-300000],
+        backgroundColor:'#f5a623',
+        borderRadius:2,
+        maxBarThickness:26,
+        datalabels:{anchor:'end',align:'bottom',color:'#f5a623',font:{size:10}}
+      },
+      {
+        label:'淨流出',
+        type:'line',
+        data:[-200000,-100000,-150000,-200000,-50000,0],
+        borderColor:'#0a2f6b',
+        backgroundColor:'#0a2f6b',
+        pointRadius:0,
+        borderWidth:0,
+        datalabels:{display:false}
+      }
+    ]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top', labels:{boxWidth:10, font:{size:10}}},
+      datalabels:{formatter:(v)=> v===0? '' : v}
+    },
+    scales:{
+      y:{
+        min:-400000, max:400000,
+        ticks:{stepSize:100000, font:{size:9}},
+        grid:{color:'#eef1f6'}
+      },
+      x:{ ticks:{font:{size:10}}, grid:{display:false} }
+    }
+  }
+});
+
+/* ---------- USD rate line chart ---------- */
+const usdLabels = ['02-02','02-04','02-06','02-08','02-10','02-12','02-14','02-16','02-18','02-20','02-22','02-24','02-26'];
+function randWalk(start, seed){
+  let v = start; const out=[];
+  for(let i=0;i<usdLabels.length;i++){
+    v += (Math.sin(i*seed)*1.4 + (Math.random()-0.5)*1.2);
+    out.push(Math.round(v*100)/100);
+  }
+  return out;
+}
+new Chart(document.getElementById('usdChart'), {
+  type:'line',
+  data:{
+    labels: usdLabels,
+    datasets:[
+      {label:'2024即期買入', data:[31,32,31.5,33,32,34,33,35,34,36,35,39,37], borderColor:'#3f7fd6', backgroundColor:'#3f7fd6', pointRadius:0, borderWidth:1.5, tension:0.3},
+      {label:'2024即期賣出', data:[29,30,32,31,33,32,34,29,33,31,30,32,34], borderColor:'#f5a623', backgroundColor:'#f5a623', pointRadius:0, borderWidth:1.5, tension:0.3},
+      {label:'2023即期買入', data:[31,29,31,30,32,29,30,33,31,34,32,33,35], borderColor:'#6ec6e0', backgroundColor:'#6ec6e0', pointRadius:0, borderWidth:1.5, tension:0.3},
+      {label:'2023即期賣出', data:[30,31,29,32,30,31,28,32,29,30,29,31,33], borderColor:'#e05252', backgroundColor:'#e05252', pointRadius:0, borderWidth:1.5, tension:0.3}
+    ]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top', labels:{boxWidth:10, font:{size:9}}},
+      datalabels:{display:false}
+    },
+    scales:{
+      y:{min:26, max:40, ticks:{stepSize:2, font:{size:9}}, grid:{color:'#eef1f6'}},
+      x:{ticks:{font:{size:9}}, grid:{display:false}}
+    }
+  }
+});
+
+/* ---------- Forecast stacked bar + warning line ---------- */
+function buildForecast(canvasId, months, yMin, yMax, step, feeData, incomingData, warnData){
+  new Chart(document.getElementById(canvasId), {
+    data:{
+      labels: months,
+      datasets:[
+        {
+          type:'bar',
+          label:'預估費用',
+          data: feeData,
+          backgroundColor:'#123a86',
+          maxBarThickness:34,
+          borderRadius:2
+        },
+        {
+          type:'bar',
+          label:'預估進帳',
+          data: incomingData,
+          backgroundColor:'#3fc1c9',
+          maxBarThickness:34,
+          borderRadius:2
+        },
+        {
+          type:'line',
+          label:'警戒線',
+          data: warnData,
+          borderColor:'#f5a623',
+          backgroundColor:'#f5a623',
+          borderDash:[4,3],
+          pointRadius:5,
+          pointBackgroundColor:'#f5a623',
+          pointBorderColor:'#f5a623',
+          borderWidth:1.5,
+          fill:false
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top', labels:{boxWidth:10, font:{size:9}}},
+        datalabels:{display:false}
+      },
+      scales:{
+        x:{stacked:true, ticks:{font:{size:9}}, grid:{display:false}},
+        y:{stacked:true, min:yMin, max:yMax, ticks:{stepSize:step, font:{size:9}}, grid:{color:'#eef1f6'}}
+      }
+    }
+  });
+}
+
+const months6 = ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08'];
+buildForecast('forecast1', months6, -150000, 250000, 50000,
+  months6.map(()=>-90000), months6.map(()=>150000), months6.map(()=>200000));
+
+buildForecast('forecast2', months6, 0, 350000, 50000,
+  months6.map(()=>0), months6.map(()=>170000), months6.map(()=>300000));
+
+buildForecast('forecast3', months6, -150000, 250000, 50000,
+  months6.map(()=>-90000), months6.map(()=>150000), months6.map(()=>200000));
+</script>
+
+<script>
+/* ===== Data Agent widget ===== */
+const agentTabsData = [
+  {
+    id:'overview', label:'資金總覽',
+    questions:[
+      { q:'目前各幣別總金額是多少?', a:'目前集團資金總覽如下：NTD 8,000,000元、USD 50,000元、JPY 90,000元，另有其他幣別合計約90,000元（依系統匯率換算為準）。整體以新台幣部位為主。' },
+      { q:'集團與錡顯各幣別餘額比例為何?', a:'集團與錡顯兩者的幣別結構相近：USD 占比最高（約80%），其次為JPY（約40%）、NTD（約30%）、其他幣別（約5%）。兩者風險曝險結構高度一致。' },
+      { q:'哪個幣別占比最高?', a:'以目前圖表顯示，USD 為佔比最高的幣別，集團與錡顯皆呈現高度美元曝險，建議搭配近期匯率走勢一併評估避險需求。' }
+    ]
+  },
+  {
+    id:'cashflow', label:'現金流量分析',
+    questions:[
+      { q:'2025年上半年現金流入與流出趨勢如何?', a:'2025/01~2025/06現金流入介於100,000~300,000元之間，6月流入達到高點300,000元；現金流出則穩定維持在約300,000元，顯示流出壓力持續存在。' },
+      { q:'哪個月份淨流出最高?', a:'由淨流出趨勢觀察，2025年1月與4月的淨流出金額相對較高（約-200,000元），隨後逐月收斂，至6月已接近轉正。' },
+      { q:'現金流入是否足以覆蓋流出?', a:'1~4月現金流入尚不足以完全覆蓋流出，呈現淨流出狀態；但5、6月流入明顯增加，已逐漸接近現金流出水準，資金壓力有改善趨勢。' }
+    ]
+  },
+  {
+    id:'fx', label:'匯率分析',
+    questions:[
+      { q:'USD近期匯率走勢如何?', a:'近期USD即期匯率呈現區間震盪，買入價約落在29~39之間，賣出價相對平穩，整體波動度較去年同期略為放大。' },
+      { q:'與去年同期相比如何?', a:'相較2023年同期，2024年USD匯率中樞略為墊高，且波動區間擴大，建議留意匯損風險並評估是否需要加強避險部位。' },
+      { q:'近期匯率是否有明顯波動?', a:'近兩週內USD即期買入價出現較明顯的上下擺動，單週波動幅度可達2~3元，建議財務單位密切關注，必要時分批鎖定匯率。' }
+    ]
+  },
+  {
+    id:'forecast', label:'資金水位預估',
+    questions:[
+      { q:'集團未來六個月資金水位預估如何?', a:'集團未來六個月（2025/01~08）預估費用約-90,000元、預估進帳約150,000元，整體維持在警戒線（約200,000元）以下，尚屬安全區間。' },
+      { q:'是否低於警戒線?', a:'目前預估各月資金水位皆低於警戒線，尚未出現超標情形；惟仍建議持續追蹤預估費用與進帳的實際落差。' },
+      { q:'含CB+CI金額後資金水位是否改善?', a:'納入CB+CI金額後，預估進帳提升至約170,000~300,000元，整體資金水位較未納入前更為寬裕，顯示CB+CI對資金部位有正向挹注效果。' }
+    ]
+  }
+];
+
+const fab = document.getElementById('agentFab');
+const panel = document.getElementById('agentPanel');
+const closeBtn = document.getElementById('agentClose');
+const newChatBtn = document.getElementById('agentNewChat');
+const tabsEl = document.getElementById('agentTabs');
+const suggestionsEl = document.getElementById('agentSuggestions');
+const introSection = document.getElementById('agentIntroSection');
+const threadEl = document.getElementById('agentThread');
+const bodyEl = document.getElementById('agentBody');
+const inputEl = document.getElementById('agentInput');
+const sendBtn = document.getElementById('agentSend');
+
+let activeTabId = agentTabsData[0].id;
+
+function renderTabs(){
+  tabsEl.innerHTML = agentTabsData.map(t =>
+    `<button class="agent-tab${t.id===activeTabId?' active':''}" data-tab="${t.id}">${t.label}</button>`
+  ).join('');
+  tabsEl.querySelectorAll('.agent-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ activeTabId = btn.dataset.tab; renderTabs(); renderSuggestions(); });
+  });
+}
+
+function renderSuggestions(){
+  const tab = agentTabsData.find(t=>t.id===activeTabId);
+  suggestionsEl.innerHTML = tab.questions.map(item =>
+    `<div class="agent-suggestion" data-q="${encodeURIComponent(item.q)}">
+      <svg viewBox="0 0 24 24"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4z"/></svg>
+      <span>${item.q}</span>
+    </div>`
+  ).join('');
+  suggestionsEl.querySelectorAll('.agent-suggestion').forEach(el=>{
+    el.addEventListener('click', ()=> sendMessage(decodeURIComponent(el.dataset.q)));
+  });
+}
+
+document.getElementById('tabPrev').addEventListener('click', ()=> tabsEl.scrollBy({left:-100, behavior:'smooth'}));
+document.getElementById('tabNext').addEventListener('click', ()=> tabsEl.scrollBy({left:100, behavior:'smooth'}));
+
+function findMockAnswer(question){
+  for(const tab of agentTabsData){
+    const hit = tab.questions.find(item => item.q === question);
+    if(hit) return hit.a;
+  }
+  const lower = question;
+  const keywordHit = agentTabsData.flatMap(t=>t.questions)
+    .find(item => lower.includes(item.q.replace(/[?？]/g,'').slice(0,4)));
+  if(keywordHit) return keywordHit.a;
+  return '這是示範資料，目前尚未串接後端 AI 服務。根據儀表板現有數據，集團總資金約8,000,000元(NTD)，USD部位為主要外幣曝險，近六個月資金水位預估均維持在警戒線以下。若需更精確的分析，可待接上正式 AI 服務後取得即時解讀。';
+}
+
+/* 串接真正 AI 服務時，將此函式改為 fetch(...) 呼叫後端/LLM API 即可，其餘 UI 邏輯不需變動 */
+function requestAgentAnswer(question){
+  return new Promise(resolve=>{
+    setTimeout(()=> resolve(findMockAnswer(question)), 700 + Math.random()*500);
+  });
+}
+
+function appendMessage(role, text){
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + role;
+  if(role === 'agent'){
+    row.innerHTML = `<div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div><div class="msg-bubble"></div>`;
+    row.querySelector('.msg-bubble').textContent = text;
+  } else {
+    row.innerHTML = `<div class="msg-bubble"></div>`;
+    row.querySelector('.msg-bubble').textContent = text;
+  }
+  threadEl.appendChild(row);
+  bodyEl.scrollTop = bodyEl.scrollHeight;
+  return row;
+}
+
+function appendTyping(){
+  const row = document.createElement('div');
+  row.className = 'msg-row agent';
+  row.id = 'typingRow';
+  row.innerHTML = `<div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div>
+    <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  threadEl.appendChild(row);
+  bodyEl.scrollTop = bodyEl.scrollHeight;
+}
+
+async function sendMessage(text){
+  const question = (text || inputEl.value).trim();
+  if(!question) return;
+  introSection.style.display = 'none';
+  threadEl.classList.add('active');
+  appendMessage('user', question);
+  inputEl.value = '';
+  updateSendState();
+  appendTyping();
+  const answer = await requestAgentAnswer(question);
+  document.getElementById('typingRow')?.remove();
+  appendMessage('agent', answer);
+}
+
+function updateSendState(){
+  sendBtn.classList.toggle('ready', inputEl.value.trim().length > 0);
+}
+
+function resetToIntro(){
+  threadEl.classList.remove('active');
+  threadEl.innerHTML = '';
+  introSection.style.display = '';
+}
+
+fab.addEventListener('click', ()=> panel.classList.toggle('open'));
+closeBtn.addEventListener('click', ()=> panel.classList.remove('open'));
+newChatBtn.addEventListener('click', resetToIntro);
+sendBtn.addEventListener('click', ()=> sendMessage());
+inputEl.addEventListener('input', updateSendState);
+inputEl.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+renderTabs();
+renderSuggestions();
+</script>
+
+</body>
+</html>
