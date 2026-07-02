@@ -545,7 +545,7 @@
 <div class="agent-panel" id="agentPanel">
   <div class="agent-topbar">
     <div class="agent-brand">
-      <span class="brand-icon"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z"/></svg></span>
+      <span class="brand-icon"><svg viewBox="0 0 100 100"><defs><mask id="botSmileMaskBrand"><rect width="100" height="100" fill="#fff"/><path d="M38 58 Q50 67 62 58" stroke="#000" stroke-width="7" stroke-linecap="round" fill="none"/></mask></defs><g fill="#fff" mask="url(#botSmileMaskBrand)"><rect x="13" y="45" width="11" height="17" rx="5.5"/><rect x="76" y="45" width="11" height="17" rx="5.5"/><rect x="47" y="15" width="6" height="17" rx="3"/><circle cx="50" cy="13" r="6"/><rect x="23" y="29" width="54" height="46" rx="17"/></g></svg></span>
       <span>Data Agent</span>
     </div>
     <button id="agentClose" aria-label="關閉">
@@ -561,7 +561,7 @@
   <div class="agent-body" id="agentBody">
     <div id="agentIntroSection">
       <div class="agent-intro">
-        <div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div>
+        <div class="agent-avatar"><svg viewBox="0 0 100 100"><g fill="#2e6fd6"><rect x="13" y="45" width="11" height="17" rx="5.5"/><rect x="76" y="45" width="11" height="17" rx="5.5"/><rect x="47" y="15" width="6" height="17" rx="3"/><circle cx="50" cy="13" r="6"/><rect x="23" y="29" width="54" height="46" rx="17"/></g><path d="M38 58 Q50 67 62 58" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/></svg></div>
         <h3>營運資金分析--營運能力小助手</h3>
       </div>
       <div class="agent-greeting">您好，我是營運資金分析助理。我可以協助您查詢各幣別餘額、預估現金流入流出、USD 匯率變化、集團與錸顯未來資金水位，並先用目前儀表板資料提供分析建議。未來可串接 AI API，改成即時讀取資料後回覆。</div>
@@ -831,6 +831,8 @@ const bodyEl = document.getElementById('agentBody');
 const inputEl = document.getElementById('agentInput');
 const sendBtn = document.getElementById('agentSend');
 
+const ROBOT_AVATAR_ICON = '<svg viewBox="0 0 100 100"><g fill="#2e6fd6"><rect x="13" y="45" width="11" height="17" rx="5.5"/><rect x="76" y="45" width="11" height="17" rx="5.5"/><rect x="47" y="15" width="6" height="17" rx="3"/><circle cx="50" cy="13" r="6"/><rect x="23" y="29" width="54" height="46" rx="17"/></g><path d="M38 58 Q50 67 62 58" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/></svg>';
+
 let activeTabId = agentTabsData[0].id;
 
 function renderTabs(){
@@ -881,7 +883,7 @@ function appendMessage(role, text){
   const row = document.createElement('div');
   row.className = 'msg-row ' + role;
   if(role === 'agent'){
-    row.innerHTML = `<div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div><div class="msg-bubble"></div>`;
+    row.innerHTML = `<div class="agent-avatar">${ROBOT_AVATAR_ICON}</div><div class="msg-bubble"></div>`;
     row.querySelector('.msg-bubble').textContent = text;
   } else {
     row.innerHTML = `<div class="msg-bubble"></div>`;
@@ -896,7 +898,7 @@ function appendTyping(){
   const row = document.createElement('div');
   row.className = 'msg-row agent';
   row.id = 'typingRow';
-  row.innerHTML = `<div class="agent-avatar"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4z" fill="#2e6fd6"/></svg></div>
+  row.innerHTML = `<div class="agent-avatar">${ROBOT_AVATAR_ICON}</div>
     <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
   threadEl.appendChild(row);
   bodyEl.scrollTop = bodyEl.scrollHeight;
